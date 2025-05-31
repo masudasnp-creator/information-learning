@@ -12,16 +12,9 @@ import { topics } from '@/constants/topics';
 export default function HomeScreen() {
   const { name, streak, level, xp, incrementStreak, lastActive, completedLessons } = useUserStore();
   const streakUpdatedToday = useRef(false);
-  const initialRenderDone = useRef(false);
   
-  // Update streak if needed - but only once after initial render
+  // Update streak if needed - only once when component mounts and user has a name
   useEffect(() => {
-    // Skip this effect on first render to prevent infinite loops
-    if (!initialRenderDone.current) {
-      initialRenderDone.current = true;
-      return;
-    }
-    
     // Only run this effect if the user is logged in and we haven't updated streak today
     if (name && !streakUpdatedToday.current) {
       const today = new Date().toISOString().split('T')[0];
@@ -31,7 +24,7 @@ export default function HomeScreen() {
         streakUpdatedToday.current = true;
       }
     }
-  }, [name]); // Remove lastActive and incrementStreak from dependencies
+  }, []); // Empty dependency array - only run once on mount
   
   // Calculate completed questions today
   const today = new Date().toISOString().split('T')[0];
